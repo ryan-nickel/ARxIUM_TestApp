@@ -78,6 +78,7 @@ namespace TestApp
             this.buttonIncrement.TabIndex = 4;
             this.buttonIncrement.Text = "Increment";
             this.buttonIncrement.UseVisualStyleBackColor = true;
+            this.buttonIncrement.Click += new System.EventHandler(this.buttonIncrement_Click);
             // 
             // DrugDisplay
             // 

@@ -61,6 +61,7 @@ namespace TestApp
             this.buttonResetCounts.TabIndex = 0;
             this.buttonResetCounts.Text = "Reset Counts";
             this.buttonResetCounts.UseVisualStyleBackColor = true;
+            this.buttonResetCounts.Click += new System.EventHandler(this.buttonResetCounts_Click);
             // 
             // buttonShowLog
             // 
@@ -70,6 +71,7 @@ namespace TestApp
             this.buttonShowLog.TabIndex = 1;
             this.buttonShowLog.Text = "Show Log";
             this.buttonShowLog.UseVisualStyleBackColor = true;
+            this.buttonShowLog.Click += new System.EventHandler(this.buttonShowLog_Click);
             // 
             // buttonExit
             // 
@@ -79,6 +81,7 @@ namespace TestApp
             this.buttonExit.TabIndex = 2;
             this.buttonExit.Text = "Exit";
             this.buttonExit.UseVisualStyleBackColor = true;
+            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
             // 
             // flowLayoutPanelDrugs
             // 
@@ -115,6 +118,8 @@ namespace TestApp
             this.Controls.Add(this.splitContainerMain);
             this.Name = "MainForm";
             this.Text = "TestApp";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.flowLayoutPanelMenu.ResumeLayout(false);
             this.splitContainerMain.Panel1.ResumeLayout(false);
             this.splitContainerMain.Panel2.ResumeLayout(false);
