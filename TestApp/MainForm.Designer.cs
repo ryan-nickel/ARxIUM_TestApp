@@ -50,7 +50,7 @@ namespace TestApp
             this.flowLayoutPanelMenu.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelMenu.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelMenu.Name = "flowLayoutPanelMenu";
-            this.flowLayoutPanelMenu.Size = new System.Drawing.Size(634, 30);
+            this.flowLayoutPanelMenu.Size = new System.Drawing.Size(697, 30);
             this.flowLayoutPanelMenu.TabIndex = 0;
             // 
             // buttonResetCounts
@@ -71,7 +71,7 @@ namespace TestApp
             this.buttonShowLog.TabIndex = 1;
             this.buttonShowLog.Text = "Show Log";
             this.buttonShowLog.UseVisualStyleBackColor = true;
-            this.buttonShowLog.Click += new System.EventHandler(this.buttonShowLog_Click);
+            this.buttonShowLog.Click += new System.EventHandler(this.ButtonShowLog_Click);
             // 
             // buttonExit
             // 
@@ -81,14 +81,14 @@ namespace TestApp
             this.buttonExit.TabIndex = 2;
             this.buttonExit.Text = "Exit";
             this.buttonExit.UseVisualStyleBackColor = true;
-            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
+            this.buttonExit.Click += new System.EventHandler(this.ButtonExit_Click);
             // 
             // flowLayoutPanelDrugs
             // 
             this.flowLayoutPanelDrugs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelDrugs.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelDrugs.Name = "flowLayoutPanelDrugs";
-            this.flowLayoutPanelDrugs.Size = new System.Drawing.Size(634, 438);
+            this.flowLayoutPanelDrugs.Size = new System.Drawing.Size(697, 460);
             this.flowLayoutPanelDrugs.TabIndex = 1;
             // 
             // splitContainerMain
@@ -106,7 +106,7 @@ namespace TestApp
             // splitContainerMain.Panel2
             // 
             this.splitContainerMain.Panel2.Controls.Add(this.flowLayoutPanelDrugs);
-            this.splitContainerMain.Size = new System.Drawing.Size(634, 472);
+            this.splitContainerMain.Size = new System.Drawing.Size(697, 494);
             this.splitContainerMain.SplitterDistance = 30;
             this.splitContainerMain.TabIndex = 1;
             // 
@@ -114,7 +114,7 @@ namespace TestApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 472);
+            this.ClientSize = new System.Drawing.Size(697, 494);
             this.Controls.Add(this.splitContainerMain);
             this.Name = "MainForm";
             this.Text = "TestApp";

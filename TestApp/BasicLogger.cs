@@ -14,7 +14,7 @@ namespace TestApp
 
         public string DateTimeFormat { get; set; } = dateTimeFormatDefault;
 
-        public void OpenLog(string fileName, bool append)
+        public void Open(string fileName, bool append)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -35,7 +35,7 @@ namespace TestApp
             }
         }
 
-        public void CloseLog()
+        public void Close()
         {
             writer.Flush();
             writer.Close();
@@ -43,7 +43,7 @@ namespace TestApp
 
         public void Dispose()
         {
-            CloseLog();
+            Close();
         }
 
 

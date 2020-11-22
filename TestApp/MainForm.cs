@@ -14,6 +14,7 @@ namespace TestApp
         private readonly string[] defaultDrugNames = { "Acetaminophen", "Oxycotin", "Ibuprofen" };
         private List<Drug> drugsList;
         private BasicLogger log = new BasicLogger();
+        private LogDisplayForm logDisplayForm = new LogDisplayForm();
         
 
         public MainForm()
@@ -31,12 +32,35 @@ namespace TestApp
             }
         }
 
-        private void buttonShowLog_Click(object sender, EventArgs e)
+        private async void ButtonShowLog_Click(object sender, EventArgs e)
         {
-
+            
+            try
+            {
+                log.Close();
+                using StreamReader reader = new StreamReader(logFileName);
+                logDisplayForm.LogText = await reader.ReadToEndAsync();
+                logDisplayForm.ShowDialog();
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"Log file not found.", "Log File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch  (DirectoryNotFoundException)
+            {
+                MessageBox.Show($"Log file path is not valid.", "Log File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (IOException)
+            {
+                MessageBox.Show($"Log file is not valid.", "Log File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                log.Open(logFileName, true);
+            }
         }
 
-        private void buttonExit_Click(object sender, EventArgs e)
+        private void ButtonExit_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -66,7 +90,7 @@ namespace TestApp
 
             try
             {
-                log.OpenLog(logFileName, false);
+                log.Open(logFileName, false);
                 log.WriteLine("START");
             }
             catch (BasicLogger.BasicLoggerException ex)
@@ -83,7 +107,7 @@ namespace TestApp
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-
+            log.Close();
         }
     }
 }
