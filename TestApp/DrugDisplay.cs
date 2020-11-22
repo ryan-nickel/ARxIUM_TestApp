@@ -43,7 +43,7 @@ namespace TestApp
             textBoxCount.Text = drug.Count.ToString();
         }
 
-        private void buttonIncrement_Click(object sender, EventArgs e)
+        private void ButtonIncrement_Click(object sender, EventArgs e)
         {
             Drug.Increment();
             textBoxCount.Text = drug.Count.ToString();
