@@ -18,17 +18,27 @@ namespace TestApp
                 throw new ArgumentNullException(nameof(value));
             }
 
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentException($"{nameof(fileName)} cannot be null or empty");
+            }
+
             var xmlserializer = new XmlSerializer(typeof(T));
             using var streamWriter = new StreamWriter(fileName);
             using var writer = XmlWriter.Create(streamWriter);
             xmlserializer.Serialize(writer, value);
         }
 
-        public static T DeserializeFromXmlFile<T>(string FileName) where T : class
+        public static T DeserializeFromXmlFile<T>(string fileName) where T : class
         {
-            using TextReader reader = new StreamReader(FileName);
-            XmlSerializer ser = new XmlSerializer(typeof(T));
-            return ser.Deserialize(reader) as T;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentException($"{nameof(fileName)} cannot be null or empty");
+            }
+
+            using TextReader reader = new StreamReader(fileName);
+            XmlSerializer xmlserializer = new XmlSerializer(typeof(T));
+            return xmlserializer.Deserialize(reader) as T;
         }
     }
 }

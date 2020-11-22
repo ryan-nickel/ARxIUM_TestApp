@@ -61,7 +61,7 @@ namespace TestApp
             this.buttonResetCounts.TabIndex = 0;
             this.buttonResetCounts.Text = "Reset Counts";
             this.buttonResetCounts.UseVisualStyleBackColor = true;
-            this.buttonResetCounts.Click += new System.EventHandler(this.buttonResetCounts_Click);
+            this.buttonResetCounts.Click += new System.EventHandler(this.ButtonResetCounts_Click);
             // 
             // buttonShowLog
             // 

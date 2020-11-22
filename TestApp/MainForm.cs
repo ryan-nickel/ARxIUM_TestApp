@@ -13,16 +13,15 @@ namespace TestApp
         private const string drugsFileName = "drugs.xml";
         private readonly string[] defaultDrugNames = { "Acetaminophen", "Oxycotin", "Ibuprofen" };
         private List<Drug> drugsList;
-        private BasicLogger log = new BasicLogger();
-        private LogDisplayForm logDisplayForm = new LogDisplayForm();
+        private readonly BasicLogger log = new BasicLogger();
+        private readonly LogDisplayForm logDisplayForm = new LogDisplayForm();
         
-
         public MainForm()
         {
             InitializeComponent();
         }
 
-        private async void buttonResetCounts_Click(object sender, EventArgs e)
+        private async void ButtonResetCounts_Click(object sender, EventArgs e)
         {
             await log.WriteLineAsync("RESET");
             drugsList.ForEach(d => d.Reset());
@@ -33,8 +32,7 @@ namespace TestApp
         }
 
         private async void ButtonShowLog_Click(object sender, EventArgs e)
-        {
-            
+        {   
             try
             {
                 log.Close();
@@ -67,19 +65,35 @@ namespace TestApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            // Drug file names stored in an XML file so new drugs can be easily added
             if (!File.Exists(drugsFileName))
             {
+                // Drugs xml file does not exist so generate a default
                 drugsList = new List<Drug>(3);
                 foreach (string drugName in defaultDrugNames)
                 {
                     drugsList.Add(new Drug(drugName));
                 }
 
-                XmlSerializationHelper.SerializeToXmlFile(drugsFileName, drugsList);
+                try
+                {
+                    XmlSerializationHelper.SerializeToXmlFile(drugsFileName, drugsList);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Error creating drug file: {ex.Message}", "Drug File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
-                drugsList = XmlSerializationHelper.DeserializeFromXmlFile<List<Drug>>(drugsFileName);
+                try
+                {
+                    drugsList = XmlSerializationHelper.DeserializeFromXmlFile<List<Drug>>(drugsFileName);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Error opening drug file: {ex.Message}", "Drug File File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
             foreach (var drug in drugsList)
@@ -96,13 +110,13 @@ namespace TestApp
             catch (BasicLogger.BasicLoggerException ex)
             {
                 MessageBox.Show($"Error creating log file: {ex.Message}", "Log File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            
+            }   
         }
 
-        private async void Drug_DrugUpdatedEvent(string name, int count, int previousCount, DateTime lastChanged)
+        private void Drug_DrugUpdatedEvent(string name, int count, int previousCount, DateTime lastChanged)
         {
-            await log.WriteLineAsync($"Name = {name} , Previous Count = {previousCount} , New Count = {count}", lastChanged);
+            log.WriteLine($"Name = {name} , Previous Count = {previousCount} , New Count = {count}", lastChanged);
+            //await log.WriteLineAsync($"Name = {name} , Previous Count = {previousCount} , New Count = {count}", lastChanged);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)

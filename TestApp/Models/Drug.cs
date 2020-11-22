@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace TestApp.Models
 {
@@ -25,10 +26,13 @@ namespace TestApp.Models
 
         public string Name { get; set; }
 
+        [XmlIgnore]
         public int Count { get; set; }
 
+        [XmlIgnore]
         public int PreviousCount { get; set; }
 
+        [XmlIgnore]
         public DateTime LastChanged { get; set; } = DateTime.Now;
 
         public void Increment()

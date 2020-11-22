@@ -9,6 +9,7 @@ namespace TestApp
 {
     class BasicLogger : IDisposable
     {
+        // Default format uses '/' to force / character to be used instead of system date separater character
         public const string dateTimeFormatDefault = "MM'/'dd'/'yy HH:mm:ss";
         private StreamWriter writer = null;
 
@@ -23,7 +24,7 @@ namespace TestApp
 
             try
             {
-                // Write default newline is \r\n so no modification needed
+                // Streamwriter default newline is \r\n so no modification needed
                 writer = new StreamWriter(fileName, append)
                 {
                     AutoFlush = true
@@ -45,7 +46,6 @@ namespace TestApp
         {
             Close();
         }
-
 
         public async Task WriteLineAsync(string value, DateTime? timestamp = null)
         {
