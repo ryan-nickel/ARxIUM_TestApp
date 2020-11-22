@@ -72,6 +72,9 @@ namespace TestApp
             catch (BasicLogger.BasicLoggerException ex)
             {
                 MessageBox.Show($"Error creating log file: {ex.Message}", "Log File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                buttonResetCounts.Enabled = false;
+                buttonShowLog.Enabled = false;
+                splitContainerMain.Panel2.Enabled = false;
             }
         }
 
@@ -95,8 +98,11 @@ namespace TestApp
             try
             {
                 log.Close();
-                using StreamReader reader = new StreamReader(logFileName);
-                logDisplayForm.LogText = await reader.ReadToEndAsync();
+                using (StreamReader reader = new StreamReader(logFileName))
+                {
+                    logDisplayForm.LogText = await reader.ReadToEndAsync();
+                }
+
                 logDisplayForm.ShowDialog();
             }
             catch (FileNotFoundException)
