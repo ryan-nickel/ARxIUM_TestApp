@@ -4,16 +4,34 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace TestApp
 {
-    class BasicLogger : IDisposable
+    public sealed class BasicLogger : IDisposable
     {
         // Default format uses '/' to force / character to be used instead of system date separater character
-        public const string dateTimeFormatDefault = "MM'/'dd'/'yy HH:mm:ss";
-        private StreamWriter writer = null;
+        public const string DateTimeFormatDefault = "MM'/'dd'/'yy HH:mm:ss";
 
-        public string DateTimeFormat { get; set; } = dateTimeFormatDefault;
+        private static readonly BasicLogger instance = new BasicLogger();
+
+        private StreamWriter writer = null;
+        private ActionBlock<(string, DateTime?)> writerActionBlock;
+
+        public string DateTimeFormat { get; set; } = DateTimeFormatDefault;
+
+        public static BasicLogger Instance { get { return instance; } }
+
+        // Static constructor and private constructor for singleton pattern
+        static BasicLogger()
+        {
+
+        }
+
+        private BasicLogger()
+        {
+
+        }
 
         public void Open(string fileName, bool append)
         {
@@ -25,12 +43,16 @@ namespace TestApp
             try
             {
                 // Streamwriter default newline is \r\n so no modification needed
+                // Autoflush so the stream is continually written
                 writer = new StreamWriter(fileName, append)
                 {
                     AutoFlush = true
                 };
+
+                // Assign the action to take when a new log message is queued
+                writerActionBlock = new ActionBlock<(string text, DateTime? datetime)>(s => WriteLineAsync(s.text, s.datetime));
             }
-            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is ArgumentException || ex is DirectoryNotFoundException || ex is PathTooLongException || ex is IOException || ex is System.Security.SecurityException )
+            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is ArgumentException || ex is DirectoryNotFoundException || ex is PathTooLongException || ex is IOException || ex is System.Security.SecurityException)
             {
                 throw new BasicLoggerException("Could not open log file for writing", ex);
             }
@@ -38,6 +60,11 @@ namespace TestApp
 
         public void Close()
         {
+            // Wait for writer action block to complete any pending writes
+            writerActionBlock.Complete();
+            writerActionBlock.Completion.Wait();
+
+            // Flush and close the writer
             writer.Flush();
             writer.Close();
         }
@@ -47,7 +74,7 @@ namespace TestApp
             Close();
         }
 
-        public async Task WriteLineAsync(string value, DateTime? timestamp = null)
+        private async Task WriteLineAsync(string value, DateTime? timestamp = null)
         {
             if (writer == null)
             {
@@ -65,8 +92,10 @@ namespace TestApp
                 throw new BasicLoggerException("Log not open");
             }
 
-            timestamp ??= DateTime.Now;
-            writer.WriteLine($"{timestamp?.ToString(DateTimeFormat)} - {value}");
+            if (!writerActionBlock.Post((value, timestamp)))
+            {
+                throw new BasicLoggerException("Could not post log message");
+            }
         }
 
         [Serializable]

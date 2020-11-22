@@ -13,7 +13,8 @@ namespace TestApp
         private const string drugsFileName = "drugs.xml";
         private readonly string[] defaultDrugNames = { "Acetaminophen", "Oxycotin", "Ibuprofen" };
         private List<Drug> drugsList;
-        private readonly BasicLogger log = new BasicLogger();
+        //private readonly BasicLogger log = new BasicLogger();
+        private readonly BasicLogger log = BasicLogger.Instance;
         private readonly LogDisplayForm logDisplayForm = new LogDisplayForm();
         
         public MainForm()
@@ -21,9 +22,10 @@ namespace TestApp
             InitializeComponent();
         }
 
-        private async void ButtonResetCounts_Click(object sender, EventArgs e)
+        private void ButtonResetCounts_Click(object sender, EventArgs e)
         {
-            await log.WriteLineAsync("RESET");
+            log.WriteLine("RESET");
+            //await log.WriteLineAsync("RESET");
             drugsList.ForEach(d => d.Reset());
             foreach (DrugDisplay display in flowLayoutPanelDrugs.Controls)
             {
