@@ -49,7 +49,7 @@ namespace TestApp
 
             try
             {
-                // Streamwriter default newline is \r\n so no modification needed
+                // StreamWriter default newline is \r\n so no modification needed
                 // Autoflush so the stream is continually written
                 writer = new StreamWriter(fileName, append)
                 {
@@ -68,12 +68,19 @@ namespace TestApp
         public void Close()
         {
             // Wait for writer action block to complete any pending writes
-            writerActionBlock.Complete();
-            writerActionBlock.Completion.Wait();
+            if (writerActionBlock != null)
+            {
+                writerActionBlock.Complete();
+                writerActionBlock.Completion.Wait();
+            }
 
             // Flush and close the writer
-            writer.Flush();
-            writer.Close();
+            if (writer != null)
+            {
+                writer.Flush();
+                writer.Close();
+            }
+
             writer = null;
         }
 
