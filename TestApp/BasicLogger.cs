@@ -16,11 +16,7 @@ namespace TestApp
         private static readonly BasicLogger instance = new BasicLogger();
 
         private StreamWriter writer = null;
-        private ActionBlock<(string, DateTime?)> writerActionBlock;
-
-        public string DateTimeFormat { get; set; } = DateTimeFormatDefault;
-
-        public static BasicLogger Instance { get { return instance; } }
+        private ActionBlock<string> writerActionBlock;
 
         // Static constructor and private constructor for singleton pattern
         static BasicLogger()
@@ -33,8 +29,19 @@ namespace TestApp
 
         }
 
+        public static BasicLogger Instance { get { return instance; } }
+
+        public string DateTimeFormat { get; set; } = DateTimeFormatDefault;
+
+        
         public void Open(string fileName, bool append)
         {
+            // If trying to re-open close first
+            if (writer != null)
+            {
+                Close();
+            }
+
             if (string.IsNullOrEmpty(fileName))
             {
                 throw new BasicLoggerException($"{nameof(fileName)} is null or empty");
@@ -50,7 +57,7 @@ namespace TestApp
                 };
 
                 // Assign the action to take when a new log message is queued
-                writerActionBlock = new ActionBlock<(string text, DateTime? datetime)>(s => WriteLineAsync(s.text, s.datetime));
+                writerActionBlock = new ActionBlock<string>(s => writer.WriteLineAsync(s));
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is ArgumentException || ex is DirectoryNotFoundException || ex is PathTooLongException || ex is IOException || ex is System.Security.SecurityException)
             {
@@ -67,22 +74,12 @@ namespace TestApp
             // Flush and close the writer
             writer.Flush();
             writer.Close();
+            writer = null;
         }
 
         public void Dispose()
         {
             Close();
-        }
-
-        private async Task WriteLineAsync(string value, DateTime? timestamp = null)
-        {
-            if (writer == null)
-            {
-                throw new BasicLoggerException("Log not open");
-            }
-
-            timestamp ??= DateTime.Now;
-            await writer.WriteLineAsync($"{timestamp?.ToString(DateTimeFormat)} - {value}");
         }
 
         public void WriteLine(string value, DateTime? timestamp = null)
@@ -92,7 +89,8 @@ namespace TestApp
                 throw new BasicLoggerException("Log not open");
             }
 
-            if (!writerActionBlock.Post((value, timestamp)))
+            timestamp ??= DateTime.Now;
+            if (!writerActionBlock.Post($"{timestamp?.ToString(DateTimeFormat)} - {value}"))
             {
                 throw new BasicLoggerException("Could not post log message");
             }
